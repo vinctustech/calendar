@@ -1,4 +1,4 @@
-import { CalendarLocale } from './index.ts'
+import { CalendarLocale } from './index'
 
 const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const monthsLong = [
