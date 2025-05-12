@@ -1,0 +1,52 @@
+{
+  "name": "@vinctus/calendar",
+  "type": "module",
+  "version": "0.1.10",
+  "description": "Calendar",
+  "homepage": "https://github.com/vinctustech/calendar",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinctustech/calendar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vinctustech/calendar/issues"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0",
+    "react-router-dom": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "rollup": "^3.25.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "typescript": "~5.7.2",
+    "@types/react": "^19.0.10",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.0",
+    "tslib": "^2.6.0"
+  },
+  "keywords": [
+    "react",
+    "calendar"
+  ],
+  "author": "Vinctus Technologies Inc.",
+  "license": "ISC"
+}
