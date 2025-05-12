@@ -1,7 +1,8 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import typescript from '@rollup/plugin-typescript'
+import dts from 'rollup-plugin-dts'
+import postcss from 'rollup-plugin-postcss'
 
 export default [
   {
@@ -21,6 +22,10 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
+      postcss({
+        extract: 'index.css',
+        minimize: true,
+      }),
       typescript({
         tsconfig: './tsconfig.json',
       }),
@@ -32,4 +37,4 @@ export default [
     output: [{ file: 'dist/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
-];
+]
