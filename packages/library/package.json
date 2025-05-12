@@ -1,7 +1,7 @@
 {
   "name": "@vinctus/calendar",
   "type": "module",
-  "version": "0.1.10",
+  "version": "0.0.2",
   "description": "Calendar",
   "homepage": "https://github.com/vinctustech/calendar",
   "repository": {
@@ -26,18 +26,15 @@
     "access": "public"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
-    "react-router-dom": ">=6.0.0"
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-typescript": "^11.0.0",
-    "@types/react": "^19.0.10",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.5.0",
+    "@types/react": "^18.3.14",
     "rollup": "^3.25.0",
     "rollup-plugin-dts": "^5.3.0",
     "rollup-plugin-postcss": "^4.0.2",

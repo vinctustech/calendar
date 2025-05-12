@@ -4,6 +4,17 @@ import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 import postcss from 'rollup-plugin-postcss'
 
+// Custom plugin to filter out SCSS imports from declaration files
+const filterScssImports = () => ({
+  name: 'filter-scss-imports',
+  resolveId(id, importer) {
+    if (id.endsWith('.scss') || id.endsWith('.sass')) {
+      return { id, external: true }
+    }
+    return null
+  },
+})
+
 export default [
   {
     input: 'src/index.ts',
@@ -35,6 +46,6 @@ export default [
   {
     input: 'dist/types/index.d.ts',
     output: [{ file: 'dist/index.d.ts', format: 'es' }],
-    plugins: [dts()],
+    plugins: [dts(), filterScssImports()],
   },
 ]
