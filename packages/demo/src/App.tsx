@@ -1,5 +1,5 @@
-import { Calendar, CalendarEvent } from '../../library/src/Calendar'
-import { en } from '../../library/src/Calendar/locales'
+import { Calendar, CalendarEvent } from '@vinctus/calendar'
+import { en } from '@vinctus/calendar'
 import { Card } from 'antd'
 
 function App() {
