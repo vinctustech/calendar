@@ -1,18 +1,37 @@
 import { Calendar, CalendarEvent } from '@vinctus/calendar'
 import { en } from '@vinctus/calendar'
-import { Card } from 'antd'
+import { Button, Card, Space } from 'antd'
+import { useState } from 'react'
 
 function App() {
-  const date = new Date(/*'2025-04-19'*/)
+  const [date, setDate] = useState(new Date())
+
+  const goToPreviousMonth = () => {
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate)
+      newDate.setMonth(newDate.getMonth() - 1)
+      return newDate
+    })
+  }
+
+  const goToNextMonth = () => {
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate)
+      newDate.setMonth(newDate.getMonth() + 1)
+      return newDate
+    })
+  }
 
   return (
     <Card>
-      {/*<Button type="primary" onClick={prevMonth}>*/}
-      {/*  prev*/}
-      {/*</Button>*/}
-      {/*<Button type="primary" onClick={nextMonth}>*/}
-      {/*  next*/}
-      {/*</Button>*/}
+      <Space>
+        <Button type="primary" onClick={goToPreviousMonth}>
+          previous
+        </Button>
+        <Button type="primary" onClick={goToNextMonth}>
+          next
+        </Button>
+      </Space>
       <div style={{ height: 'calc(100vh - 140px)' }}>
         <Calendar date={date} events={sampleEvents} header={true} locale={en} />
       </div>
