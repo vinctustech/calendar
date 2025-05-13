@@ -1,51 +1,89 @@
-import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 import postcss from 'rollup-plugin-postcss'
+import pkg from './package.json' with { type: 'json' }
 
-// Custom plugin to filter out SCSS imports from declaration files
-const filterScssImports = () => ({
-  name: 'filter-scss-imports',
-  resolveId(id, importer) {
-    if (id.endsWith('.scss') || id.endsWith('.sass')) {
-      return { id, external: true }
-    }
-    return null
-  },
-})
+// Extract peer dependencies to mark them as external
+const external = Object.keys(pkg.peerDependencies || {})
+
+const commonPlugins = [
+  resolve({
+    browser: true,
+    preferBuiltins: false,
+  }),
+  commonjs(),
+]
 
 export default [
+  // Main build (ES and CJS)
   {
     input: 'src/index.ts',
+    external: (id) => {
+      // Mark peer dependencies as external
+      if (external.some((dep) => id.startsWith(dep))) {
+        return true
+      }
+      // Also exclude any node_modules that aren't bundled
+      return /node_modules/.test(id)
+    },
     output: [
       {
-        file: 'dist/index.js',
+        file: pkg.main, // dist/index.js
         format: 'cjs',
         sourcemap: true,
+        exports: 'named',
       },
       {
-        file: 'dist/index.esm.js',
+        file: pkg.module, // dist/index.esm.js
         format: 'esm',
         sourcemap: true,
       },
     ],
     plugins: [
-      resolve(),
-      commonjs(),
       postcss({
-        extract: 'index.css',
+        extract: 'index.css', // Extract CSS to a separate file
         minimize: true,
+        use: [
+          [
+            'sass',
+            {
+              silenceDeprecations: ['legacy-js-api'],
+            },
+          ],
+        ],
       }),
       typescript({
         tsconfig: './tsconfig.json',
+        declaration: false, // We'll handle declarations separately
+        declarationMap: false,
+        exclude: ['**/*.test.*', '**/*.stories.*'],
+      }),
+      ...commonPlugins,
+    ],
+  },
+  // Type declarations build
+  {
+    input: 'src/index.ts',
+    output: {
+      file: pkg.types, // dist/index.d.ts
+      format: 'esm',
+    },
+    external: [...external, /\.scss$/], // Also mark .scss files as external
+    plugins: [
+      postcss({
+        extract: false, // Don't extract CSS during type generation
+        inject: false,
+      }),
+      dts({
+        tsconfig: './tsconfig.json',
+        // Only process TypeScript files, skip CSS/SCSS
+        compilerOptions: {
+          declaration: true,
+          emitDeclarationOnly: true,
+        },
       }),
     ],
-    external: ['react', 'react-dom', 'react-router-dom'],
-  },
-  {
-    input: 'dist/types/index.d.ts',
-    output: [{ file: 'dist/index.d.ts', format: 'es' }],
-    plugins: [dts(), filterScssImports()],
   },
 ]
