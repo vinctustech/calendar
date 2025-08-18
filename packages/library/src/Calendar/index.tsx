@@ -110,6 +110,7 @@ export type CalendarProps<T extends CalendarEvent = CalendarEvent> = {
   events: T[]
   maxEventsPerDay?: number
   onEventClick?: (event: T) => void
+  onDayClick?: (date: Date) => void
   onMoreEventsClick?: (date: Date, events: T[]) => void
   header?: boolean
   daySelector?: boolean
@@ -122,6 +123,7 @@ export const Calendar = <T extends CalendarEvent>({
   events = [],
   maxEventsPerDay = 5,
   onEventClick,
+  onDayClick,
   onMoreEventsClick,
   header,
   daySelector,
@@ -161,21 +163,25 @@ export const Calendar = <T extends CalendarEvent>({
               className={`cal-cell ${!dateObj.isCurrentMonth ? 'cal-other-month' : ''} 
                   ${isToday(dateObj.date) ? 'cal-today' : ''} 
                   ${daySelector && isEqual(dateObj.date, selectedDate) ? 'cal-selected' : ''}`}
-              onClick={() => daySelector && setSelectedDate(dateObj.date)}
+              onClick={() => {
+                if (daySelector) {
+                  setSelectedDate(dateObj.date)
+                }
+
+                // Defer the callback to allow React to re-render first
+                setTimeout(() => {
+                  onDayClick?.(dateObj.date)
+                }, 0)
+              }}
             >
               <div className="cal-date-number-container">
-                <span
-                  className={`cal-date-number ${isToday(dateObj.date) ? 'cal-today-number' : ''}`}
-                >
+                <span className={`cal-date-number ${isToday(dateObj.date) ? 'cal-today-number' : ''}`}>
                   {dateObj.day}
                 </span>
               </div>
               <div className="cal-events-container">
                 {dateEvents
-                  .slice(
-                    0,
-                    dateEvents.length > maxEventsPerDay ? maxEventsPerDay - 1 : maxEventsPerDay,
-                  )
+                  .slice(0, dateEvents.length > maxEventsPerDay ? maxEventsPerDay - 1 : maxEventsPerDay)
                   .map((event, eventIndex) => (
                     <div
                       key={eventIndex}
@@ -193,13 +199,8 @@ export const Calendar = <T extends CalendarEvent>({
                       }}
                       title={event.title}
                     >
-                      <span
-                        className="cal-event-dot"
-                        style={{ backgroundColor: event.color }}
-                      ></span>
-                      <span className={`cal-event-title ${ellipsis ? 'cal-ellipsis' : ''}`}>
-                        {event.title}
-                      </span>
+                      <span className="cal-event-dot" style={{ backgroundColor: event.color }}></span>
+                      <span className={`cal-event-title ${ellipsis ? 'cal-ellipsis' : ''}`}>{event.title}</span>
                     </div>
                   ))}
                 {dateEvents.length > maxEventsPerDay && (

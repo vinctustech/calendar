@@ -33,7 +33,15 @@ function App() {
         </Button>
       </Space>
       <div style={{ height: 'calc(100vh - 140px)' }}>
-        <Calendar date={date} events={sampleEvents} header={true} locale={en} />
+        <Calendar
+          date={date}
+          events={sampleEvents}
+          header={true}
+          locale={en}
+          ellipsis={true}
+          daySelector
+          onDayClick={(date) => alert(date)}
+        />
       </div>
     </Card>
   )
