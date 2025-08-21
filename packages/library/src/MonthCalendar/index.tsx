@@ -88,33 +88,33 @@ export const MonthCalendar = <T extends CalendarEvent>({
   const month = date.getMonth()
 
   return (
-    <div className="cal-container">
+    <div className="month-calendar">
       {header && (
-        <div className="cal-header">
-          <div className="cal-month-display">
+        <div className="month-calendar-header">
+          <div className="month-calendar-month-display">
             <h2>
               {locale.monthsLong[month]} {year}
             </h2>
           </div>
         </div>
       )}
-      <div className="cal-weekday-header">
+      <div className="month-calendar-weekday-header">
         {locale.daysShort.map((day, index) => (
-          <div key={index} className="cal-weekday-cell">
+          <div key={index} className="month-calendar-weekday-cell">
             {day}
           </div>
         ))}
       </div>
-      <div className="cal-grid">
+      <div className="month-calendar-grid">
         {generateCalendarGrid(year, month).map((dateObj, index) => {
           const dateEvents = getEventsForDate(events, dateObj.date)
 
           return (
             <div
               key={index}
-              className={`cal-cell ${!dateObj.isCurrentMonth ? 'cal-other-month' : ''} 
-                  ${isToday(dateObj.date) ? 'cal-today' : ''} 
-                  ${daySelector && isEqual(dateObj.date, selectedDate) ? 'cal-selected' : ''}`}
+              className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''} 
+                  ${isToday(dateObj.date) ? 'month-calendar-today' : ''} 
+                  ${daySelector && isEqual(dateObj.date, selectedDate) ? 'month-calendar-selected' : ''}`}
               onClick={() => {
                 if (daySelector) {
                   setSelectedDate(dateObj.date)
@@ -126,21 +126,21 @@ export const MonthCalendar = <T extends CalendarEvent>({
                 }, 0)
               }}
             >
-              <div className="cal-date-number-container">
-                <span className={`cal-date-number ${isToday(dateObj.date) ? 'cal-today-number' : ''}`}>
+              <div className="month-calendar-date-number-container">
+                <span className={`month-calendar-date-number ${isToday(dateObj.date) ? 'month-calendar-today-number' : ''}`}>
                   {dateObj.day}
                 </span>
               </div>
-              <div className="cal-events-container">
+              <div className="month-calendar-events-container">
                 {dateEvents
                   .slice(0, dateEvents.length > maxEventsPerDay ? maxEventsPerDay - 1 : maxEventsPerDay)
                   .map((event, eventIndex) => (
                     <div
                       key={eventIndex}
                       className={`
-                      cal-event-item 
-                      ${isFutureDate(event.date) ? 'cal-future-event' : ''} 
-                      ${event.strikethrough ? 'cal-cancelled-event' : ''}
+                      month-calendar-event 
+                      ${isFutureDate(event.date) ? 'month-calendar-future-event' : ''} 
+                      ${event.strikethrough ? 'month-calendar-cancelled-event' : ''}
                     `}
                       style={event.style}
                       onClick={(e) => {
@@ -151,13 +151,13 @@ export const MonthCalendar = <T extends CalendarEvent>({
                       }}
                       title={event.title}
                     >
-                      <span className="cal-event-dot" style={{ backgroundColor: event.color }}></span>
-                      <span className={`cal-event-title ${ellipsis ? 'cal-ellipsis' : ''}`}>{event.title}</span>
+                      <span className="month-calendar-event-dot" style={{ backgroundColor: event.color }}></span>
+                      <span className={`month-calendar-event-title ${ellipsis ? 'month-calendar-ellipsis' : ''}`}>{event.title}</span>
                     </div>
                   ))}
                 {dateEvents.length > maxEventsPerDay && (
                   <div
-                    className="cal-more-events"
+                    className="month-calendar-more-events"
                     onClick={(e) => {
                       e.stopPropagation()
                       if (onMoreEventsClick) {

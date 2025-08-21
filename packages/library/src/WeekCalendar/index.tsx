@@ -110,17 +110,17 @@ export const WeekCalendar = <T extends CalendarEvent>({
   return (
     <div className="week-calendar">
       {/* Header with days */}
-      <div className="week-calendar__header" ref={headerRef}>
-        <div className="week-calendar__time-column"></div>
+      <div className="week-calendar-header" ref={headerRef}>
+        <div className="week-calendar-time-column"></div>
         {weekDays.map((day) => (
           <div
             key={formatDate(day, 'YYYY-MM-DD')}
-            className="week-calendar__day-header"
+            className="week-calendar-day-header"
             onClick={() => onDayClick?.(day)}
           >
-            <div className="week-calendar__day-name">{formatDate(day, 'ddd')}</div>
+            <div className="week-calendar-day-name">{formatDate(day, 'ddd')}</div>
             <div
-              className={`week-calendar__day-number ${isEqual(day, new Date()) ? 'week-calendar__day-number--today' : ''}`}
+              className={`week-calendar-day-number ${isEqual(day, new Date()) ? 'week-calendar-day-number-today' : ''}`}
             >
               {formatDate(day, 'D')}
             </div>
@@ -129,20 +129,20 @@ export const WeekCalendar = <T extends CalendarEvent>({
       </div>
 
       {/* Time grid */}
-      <div className="week-calendar__body" ref={bodyRef}>
+      <div className="week-calendar-body" ref={bodyRef}>
         {timeSlots.map((hour) => (
-          <div key={hour} className="week-calendar__time-row">
-            <div className="week-calendar__time-label">{formatHour(hour)}</div>
+          <div key={hour} className="week-calendar-time-row">
+            <div className="week-calendar-time-label">{formatHour(hour)}</div>
             {weekDays.map((day) => {
               const dayStr = formatDate(day, 'YYYY-MM-DD')
               const hourEvents = getEventsForDayAndHour(dayStr, hour)
 
               return (
-                <div key={`${dayStr}-${hour}`} className="week-calendar__time-cell">
+                <div key={`${dayStr}-${hour}`} className="week-calendar-time-cell">
                   {hourEvents.map((event, idx) => {
-                    const eventClasses = ['week-calendar__event']
+                    const eventClasses = ['week-calendar-event']
                     if (event.strikethrough) {
-                      eventClasses.push('week-calendar__event--cancelled')
+                      eventClasses.push('week-calendar-event-cancelled')
                     }
 
                     return (
@@ -153,10 +153,10 @@ export const WeekCalendar = <T extends CalendarEvent>({
                         onClick={() => onEventClick?.(event)}
                       >
                         <div
-                          className="week-calendar__event-dot"
+                          className="week-calendar-event-dot"
                           style={{ backgroundColor: event.color || '#bfbfbf' }}
                         />
-                        <div className="week-calendar__event-title">{event.title}</div>
+                        <div className="week-calendar-event-title">{event.title}</div>
                       </div>
                     )
                   })}

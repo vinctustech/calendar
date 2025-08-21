@@ -1,4 +1,4 @@
-.cal-container {
+.month-calendar {
   width: 100%;
   height: 100%;
   display: flex;
@@ -7,14 +7,14 @@
           -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
           sans-serif;
 
-  .cal-header {
+  .month-calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
   }
 
-  .cal-month-display {
+  .month-calendar-month-display {
     h2 {
       font-size: 18px;
       font-weight: 500;
@@ -22,12 +22,12 @@
     }
   }
 
-  .cal-weekday-header {
+  .month-calendar-weekday-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     border-bottom: 1px solid #e0e0e0;
 
-    .cal-weekday-cell {
+    .month-calendar-weekday-cell {
       padding: 4px 0 4px 0;
       text-align: center;
       font-size: 12px;
@@ -37,7 +37,7 @@
     }
   }
 
-  .cal-grid {
+  .month-calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
@@ -45,7 +45,7 @@
     border-left: 1px solid #e0e0e0;
   }
 
-  .cal-cell {
+  .month-calendar-cell {
     position: relative;
     padding: 4px;
     border-right: 1px solid #e0e0e0;
@@ -56,13 +56,13 @@
       background-color: #f8f9fa;
     }
 
-    .cal-date-number-container {
+    .month-calendar-date-number-container {
       display: flex;
       justify-content: center;
       margin-bottom: 2px;
     }
 
-    .cal-date-number {
+    .month-calendar-date-number {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -71,35 +71,35 @@
       color: #3c4043;
     }
 
-    .cal-events-container {
+    .month-calendar-events-container {
       display: flex;
       flex-direction: column;
     }
   }
 
-  .cal-other-month {
+  .month-calendar-other-month {
     background-color: #f8f9fa;
 
-    .cal-date-number {
+    .month-calendar-date-number {
       color: #80868b;
     }
   }
 
-  .cal-today {
+  .month-calendar-today {
     background-color: #e8f0fe;
 
-    .cal-today-number {
+    .month-calendar-today-number {
       color: #1a73e8;
       font-weight: bold;
     }
   }
 
-  .cal-selected {
+  .month-calendar-selected {
     outline: 2px solid #1a73e8;
     z-index: 1;
   }
 
-  .cal-event-item {
+  .month-calendar-event {
     display: flex;
     align-items: center;
     padding: 3px 4px;
@@ -116,7 +116,7 @@
       background-color: rgba(0, 0, 0, 0.04);
     }
 
-    .cal-event-dot {
+    .month-calendar-event-dot {
       display: inline-block;
       width: 8px;
       height: 8px;
@@ -125,25 +125,25 @@
       flex-shrink: 0;
     }
 
-    .cal-event-title {
+    .month-calendar-event-title {
       white-space: nowrap;
       overflow: hidden;
     }
   }
 
-  .cal-ellipsis {
+  .month-calendar-ellipsis {
     text-overflow: ellipsis;
   }
 
-  .cal-cancelled-event {
+  .month-calendar-cancelled-event {
     text-decoration: line-through;
   }
 
-  .cal-future-event {
+  .month-calendar-future-event {
     color: #3c4043;
   }
 
-  .cal-more-events {
+  .month-calendar-more-events {
     font-size: 11px;
     color: #70757a;
     cursor: pointer;
