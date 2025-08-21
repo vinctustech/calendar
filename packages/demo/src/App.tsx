@@ -1,5 +1,4 @@
-import { Calendar, CalendarEvent } from '@vinctus/calendar'
-import { en } from '@vinctus/calendar'
+import { MonthCalendar, CalendarEvent, en } from '@vinctus/calendar'
 import { Button, Card, Space } from 'antd'
 import { useState } from 'react'
 
@@ -33,7 +32,7 @@ function App() {
         </Button>
       </Space>
       <div style={{ height: 'calc(100vh - 140px)' }}>
-        <Calendar
+        <MonthCalendar
           date={date}
           events={sampleEvents}
           header={true}

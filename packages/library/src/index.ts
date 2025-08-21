@@ -1,4 +1,10 @@
-export { Calendar } from './Calendar'
-export type { CalendarEvent, CalendarProps } from './Calendar'
-export { en, fr } from './Calendar/locales'
-export type { CalendarLocale } from './Calendar/locales'
+export { MonthCalendar } from './MonthCalendar'
+export type { MonthCalendarProps } from './MonthCalendar'
+
+// Backwards compatibility - alias MonthCalendar as Calendar
+export { MonthCalendar as Calendar } from './MonthCalendar'
+export type { MonthCalendarProps as CalendarProps } from './MonthCalendar'
+
+// Shared exports
+export type { CalendarEvent, CalendarLocale, BaseCalendarProps } from './shared/types'
+export { en, fr } from './shared/locales'

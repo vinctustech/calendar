@@ -1,4 +1,4 @@
-import { CalendarLocale } from './index'
+import { CalendarLocale } from '../types'
 
 const daysShort = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'] // No periods, Google Calendar style
 const monthsLong = [

@@ -1,23 +1,8 @@
-import { CSSProperties, useState } from 'react'
+import { useState } from 'react'
 import './styles.scss'
-import { CalendarLocale, en } from './locales'
-
-const getDaysInMonth = (year: number, month: number) => {
-  return new Date(year, month + 1, 0).getDate()
-}
-
-const getFirstDayOfMonth = (year: number, month: number) => {
-  return new Date(year, month, 1).getDay()
-}
-
-const getEventsForDate = <T extends CalendarEvent>(events: T[], date: Date) => {
-  return events.filter(
-    (event) =>
-      event.date.getDate() === date.getDate() &&
-      event.date.getMonth() === date.getMonth() &&
-      event.date.getFullYear() === date.getFullYear(),
-  )
-}
+import { CalendarEvent, BaseCalendarProps, CalendarLocale } from '../shared/types'
+import { isToday, isEqual, isFutureDate, getEventsForDate, getDaysInMonth, getFirstDayOfMonth } from '../shared/utils'
+import { en } from '../shared/locales'
 
 const generateCalendarGrid = (year: number, month: number) => {
   const daysInMonth = getDaysInMonth(year, month)
@@ -77,48 +62,15 @@ const generateCalendarGrid = (year: number, month: number) => {
   return [...prevMonthDays, ...currentMonthDays, ...nextMonthDays]
 }
 
-const isToday = (date: Date) => isEqual(date, new Date())
-
-const isEqual = (a: Date, b: Date) => {
-  const acopy = new Date(a)
-  const bcopy = new Date(b)
-
-  acopy.setHours(0, 0, 0, 0)
-  bcopy.setHours(0, 0, 0, 0)
-  return bcopy.getTime() === acopy.getTime()
-}
-
-const isFutureDate = (date: Date) => {
-  const today = new Date()
-  const checkDate = new Date(date)
-
-  today.setHours(0, 0, 0, 0)
-  checkDate.setHours(0, 0, 0, 0)
-  return checkDate > today
-}
-
-export type CalendarEvent = {
-  date: Date
-  title: string
-  color: string
-  strikethrough?: boolean
-  style?: CSSProperties
-}
-
-export type CalendarProps<T extends CalendarEvent = CalendarEvent> = {
-  date: Date
-  events: T[]
+export type MonthCalendarProps<T extends CalendarEvent = CalendarEvent> = BaseCalendarProps<T> & {
   maxEventsPerDay?: number
-  onEventClick?: (event: T) => void
-  onDayClick?: (date: Date) => void
   onMoreEventsClick?: (date: Date, events: T[]) => void
   header?: boolean
   daySelector?: boolean
-  locale?: CalendarLocale
   ellipsis?: boolean
 }
 
-export const Calendar = <T extends CalendarEvent>({
+export const MonthCalendar = <T extends CalendarEvent>({
   date = new Date(),
   events = [],
   maxEventsPerDay = 5,
@@ -129,7 +81,7 @@ export const Calendar = <T extends CalendarEvent>({
   daySelector,
   locale = en,
   ellipsis,
-}: CalendarProps<T>) => {
+}: MonthCalendarProps<T>) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   const year = date.getFullYear()
