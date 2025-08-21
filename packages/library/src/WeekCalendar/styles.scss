@@ -1,0 +1,208 @@
+.week-calendar {
+  background: white;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #f0f0f0;
+
+  &__header {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+    // Padding will be dynamically adjusted by JavaScript
+  }
+
+  &__time-column {
+    // No border needed in header
+  }
+
+  &__day-header {
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f0f6ff;
+    }
+  }
+
+  &__day-name {
+    font-size: 12px;
+    color: #8c8c8c;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  &__day-number {
+    font-size: 16px;
+    font-weight: 500;
+    color: #262626;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    transition: all 0.2s;
+
+    &--today {
+      background-color: #1890ff;
+      color: white;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__time-row {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    border-bottom: 1px solid #f0f0f0;
+    height: 80px; // Taller rows to give events more room
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__time-label {
+    padding: 8px;
+    font-size: 12px;
+    color: #8c8c8c;
+    text-align: right;
+    border-left: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    background: #fafafa;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-top: 4px;
+  }
+
+  &__time-cell {
+    border-right: 1px solid #f0f0f0;
+    position: relative;
+    padding: 4px 2px;
+    height: 80px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &:hover {
+      background-color: #f0f6ff;
+    }
+  }
+
+  &__event {
+    display: flex;
+    align-items: center;
+    padding: 3px 4px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #000000;
+    transition: background-color 0.1s ease;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-bottom: 1px; // Tighter spacing to match month calendar
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__event-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+
+  &__event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0; // Important for flex ellipsis to work
+  }
+
+  &__event--cancelled {
+    text-decoration: line-through;
+  }
+
+  &__event--future {
+    color: #3c4043;
+  }
+}
+
+// Scrollbar handling
+.week-calendar__body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.week-calendar__body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.week-calendar__body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.week-calendar__body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .week-calendar {
+    &__time-column {
+      width: 60px;
+    }
+
+    &__header,
+    &__time-row {
+      grid-template-columns: 60px repeat(7, 1fr);
+    }
+
+    &__time-label {
+      font-size: 10px;
+      padding: 4px;
+    }
+
+    &__day-name {
+      font-size: 10px;
+    }
+
+    &__day-number {
+      font-size: 14px;
+      width: 24px;
+      height: 24px;
+    }
+
+    &__event {
+      font-size: 10px;
+      padding: 2px 4px;
+    }
+  }
+}

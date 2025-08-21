@@ -1,47 +1,77 @@
-import { MonthCalendar, CalendarEvent, en } from '@vinctus/calendar'
-import { Button, Card, Space } from 'antd'
+import { MonthCalendar, WeekCalendar, CalendarEvent, en } from '@vinctus/calendar'
+import { Button, Card, Space, Tabs } from 'antd'
 import { useState } from 'react'
 
 function App() {
   const [date, setDate] = useState(new Date())
 
-  const goToPreviousMonth = () => {
+  const goToPrevious = () => {
     setDate((prevDate) => {
       const newDate = new Date(prevDate)
-      newDate.setMonth(newDate.getMonth() - 1)
+      newDate.setDate(newDate.getDate() - 7) // Go back a week for both views
       return newDate
     })
   }
 
-  const goToNextMonth = () => {
+  const goToNext = () => {
     setDate((prevDate) => {
       const newDate = new Date(prevDate)
-      newDate.setMonth(newDate.getMonth() + 1)
+      newDate.setDate(newDate.getDate() + 7) // Go forward a week for both views
       return newDate
     })
   }
+
+  const items = [
+    {
+      key: 'month',
+      label: 'Month View',
+      children: (
+        <div style={{ height: 'calc(100vh - 200px)' }}>
+          <MonthCalendar
+            date={date}
+            events={sampleEvents}
+            header={true}
+            locale={en}
+            ellipsis={true}
+            daySelector
+            onDayClick={(date) => alert(`Month view clicked: ${date}`)}
+            onEventClick={(event) => alert(`Event: ${event.title}`)}
+          />
+        </div>
+      ),
+    },
+    {
+      key: 'week',
+      label: 'Week View',
+      children: (
+        <div style={{ height: 'calc(100vh - 200px)' }}>
+          <WeekCalendar
+            date={date}
+            events={sampleEvents}
+            locale={en}
+            onDayClick={(date) => alert(`Week view clicked: ${date}`)}
+            onEventClick={(event) => alert(`Event: ${event.title}`)}
+          />
+        </div>
+      ),
+    },
+  ]
 
   return (
     <Card>
-      <Space>
-        <Button type="primary" onClick={goToPreviousMonth}>
-          previous
+      <Space style={{ marginBottom: 16 }}>
+        <Button type="primary" onClick={goToPrevious}>
+          Previous Week
         </Button>
-        <Button type="primary" onClick={goToNextMonth}>
-          next
+        <Button type="primary" onClick={goToNext}>
+          Next Week
+        </Button>
+        <Button onClick={() => setDate(new Date())}>
+          Today
         </Button>
       </Space>
-      <div style={{ height: 'calc(100vh - 140px)' }}>
-        <MonthCalendar
-          date={date}
-          events={sampleEvents}
-          header={true}
-          locale={en}
-          ellipsis={true}
-          daySelector
-          onDayClick={(date) => alert(date)}
-        />
-      </div>
+      
+      <Tabs items={items} />
     </Card>
   )
 }
