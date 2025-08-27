@@ -20,6 +20,15 @@ export const isFutureDate = (date: Date) => {
   return checkDate > today
 }
 
+export const isPastDate = (date: Date) => {
+  const today = new Date()
+  const checkDate = new Date(date)
+
+  today.setHours(0, 0, 0, 0)
+  checkDate.setHours(0, 0, 0, 0)
+  return checkDate < today
+}
+
 export const getEventsForDate = <T extends CalendarEvent>(events: T[], date: Date) => {
   return events.filter(
     (event) =>

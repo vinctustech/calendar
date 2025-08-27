@@ -19,7 +19,7 @@
   }
 
   .week-calendar-day-header {
-    padding: 12px 8px;
+    padding: 2px 8px;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -31,28 +31,33 @@
 
   .week-calendar-day-name {
     font-size: 12px;
-    color: #8c8c8c;
+    color: #70757a;
     text-transform: uppercase;
     font-weight: 500;
-    margin-bottom: 4px;
+    margin-bottom: 0;
+
+    &.week-calendar-day-name-past {
+      color: #80868b;
+    }
   }
 
   .week-calendar-day-number {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 500;
-    color: #262626;
-    width: 28px;
-    height: 28px;
+    color: #3c4043;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    border-radius: 50%;
     transition: all 0.2s;
 
     &.week-calendar-day-number-today {
-      background-color: #1890ff;
-      color: white;
+      color: #1a73e8;
+      font-weight: bold;
+    }
+
+    &.week-calendar-day-number-past {
+      color: #80868b;
     }
   }
 
@@ -195,9 +200,7 @@
     }
 
     .week-calendar-day-number {
-      font-size: 14px;
-      width: 24px;
-      height: 24px;
+      font-size: 10px;
     }
 
     .week-calendar-event {

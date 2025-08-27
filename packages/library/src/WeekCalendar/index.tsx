@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import './styles.scss'
 import { CalendarEvent, BaseCalendarProps } from '../shared/types'
-import { isEqual } from '../shared/utils'
+import { isEqual, isToday, isPastDate } from '../shared/utils'
 import { en } from '../shared/locales'
 
 // Simple date utility functions to replace dayjs
@@ -21,7 +21,7 @@ const addDays = (date: Date, days: number): Date => {
 const formatDate = (date: Date, format: string): string => {
   const day = date.getDate()
   const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()]
-  
+
   if (format === 'YYYY-MM-DD') {
     return date.toISOString().split('T')[0]
   }
@@ -33,7 +33,6 @@ const formatDate = (date: Date, format: string): string => {
   }
   return date.toISOString()
 }
-
 
 export interface WeekCalendarProps<T extends CalendarEvent = CalendarEvent> extends BaseCalendarProps<T> {
   // No additional props needed for now
@@ -112,20 +111,27 @@ export const WeekCalendar = <T extends CalendarEvent>({
       {/* Header with days */}
       <div className="week-calendar-header" ref={headerRef}>
         <div className="week-calendar-time-column"></div>
-        {weekDays.map((day) => (
-          <div
-            key={formatDate(day, 'YYYY-MM-DD')}
-            className="week-calendar-day-header"
-            onClick={() => onDayClick?.(day)}
-          >
-            <div className="week-calendar-day-name">{formatDate(day, 'ddd')}</div>
+        {weekDays.map((day) => {
+          const isPast = isPastDate(day)
+          const isTodayDate = isToday(day)
+
+          return (
             <div
-              className={`week-calendar-day-number ${isEqual(day, new Date()) ? 'week-calendar-day-number-today' : ''}`}
+              key={formatDate(day, 'YYYY-MM-DD')}
+              className={`week-calendar-day-header ${isPast ? 'week-calendar-day-header-past' : ''}`}
+              onClick={() => onDayClick?.(day)}
             >
-              {formatDate(day, 'D')}
+              <div className={`week-calendar-day-name ${isPast ? 'week-calendar-day-name-past' : ''}`}>
+                {formatDate(day, 'ddd')}
+              </div>
+              <div
+                className={`week-calendar-day-number ${isTodayDate ? 'week-calendar-day-number-today' : ''} ${isPast ? 'week-calendar-day-number-past' : ''}`}
+              >
+                {formatDate(day, 'D')}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Time grid */}
