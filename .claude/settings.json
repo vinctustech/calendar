@@ -1,0 +1,54 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Write(*)",
+      "Bash(npm run:*)",
+      "Bash(git add:*)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(mkdir:*)",
+      "Bash(pkill:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(npx prettier:*)",
+      "Bash(sed:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(grep:*)",
+      "Bash(cp:*)",
+      "Bash(cd:*)",
+      "Bash(mv:*)",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_install",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_wait_for"
+    ],
+    "deny": [],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "sequential-thinking"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -q '\\.tsx\\?$'; then npx prettier --write \"$file_path\"; fi; }"
+          }
+        ]
+      }
+    ]
+  }
+}

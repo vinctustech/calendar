@@ -12,6 +12,8 @@
     "publish": "npm run build && npm publish --workspace=@vinctus/calendar --access public"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0",
     "sass": "^1.88.0",
     "typescript": "~5.7.2"
   }
