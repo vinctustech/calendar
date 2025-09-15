@@ -35,7 +35,7 @@ const formatDate = (date: Date, format: string): string => {
 }
 
 export interface WeekCalendarProps<T extends CalendarEvent = CalendarEvent> extends BaseCalendarProps<T> {
-  // No additional props needed for now
+  onSelectSlot?: (slotInfo: { start: Date; end: Date }) => void
 }
 
 export const WeekCalendar = <T extends CalendarEvent>({
@@ -44,6 +44,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   locale = en,
   onEventClick,
   onDayClick,
+  onSelectSlot,
   theme = 'light',
 }: WeekCalendarProps<T>) => {
   const bodyRef = React.useRef<HTMLDivElement>(null)
@@ -145,7 +146,24 @@ export const WeekCalendar = <T extends CalendarEvent>({
               const hourEvents = getEventsForDayAndHour(dayStr, hour)
 
               return (
-                <div key={`${dayStr}-${hour}`} className="week-calendar-time-cell">
+                <div
+                  key={`${dayStr}-${hour}`}
+                  className="week-calendar-time-cell"
+                  onClick={(e) => {
+                    // Only trigger if clicking on empty space, not on an event
+                    if (onSelectSlot && (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('week-calendar-time-cell'))) {
+                      // Create start and end dates for the time slot
+                      const start = new Date(day)
+                      start.setHours(hour, 0, 0, 0)
+
+                      const end = new Date(day)
+                      end.setHours(hour + 1, 0, 0, 0)
+
+                      onSelectSlot({ start, end })
+                    }
+                  }}
+                  style={{ cursor: onSelectSlot ? 'pointer' : 'default' }}
+                >
                   {hourEvents.map((event, idx) => {
                     const eventClasses = ['week-calendar-event']
                     if (event.strikethrough) {
@@ -157,7 +175,10 @@ export const WeekCalendar = <T extends CalendarEvent>({
                         key={idx}
                         className={eventClasses.join(' ')}
                         style={event.style}
-                        onClick={() => onEventClick?.(event)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onEventClick?.(event)
+                        }}
                       >
                         <div
                           className="week-calendar-event-dot"
