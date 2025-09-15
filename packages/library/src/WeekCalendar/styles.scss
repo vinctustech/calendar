@@ -1,4 +1,4 @@
-@import '../shared/themes.scss';
+@use '../shared/themes.scss';
 
 .week-calendar {
   background: var(--calendar-bg-primary);
