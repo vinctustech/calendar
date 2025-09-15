@@ -14,6 +14,7 @@ export type BaseCalendarProps<T extends CalendarEvent = CalendarEvent> = {
   onEventClick?: (event: T) => void
   onDayClick?: (date: Date) => void
   locale?: CalendarLocale
+  theme?: 'light' | 'dark'
 }
 
 export type CalendarLocale = {

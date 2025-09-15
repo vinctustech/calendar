@@ -1,0 +1,63 @@
+// Light theme (default)
+.calendar-light {
+  // Background colors
+  --calendar-bg-primary: #ffffff;
+  --calendar-bg-secondary: #f8f9fa;
+  --calendar-bg-hover: #f8f9fa;
+  --calendar-bg-today: #e8f0fe;
+  --calendar-bg-time-label: #fafafa;
+  --calendar-bg-day-hover: #f0f6ff;
+  --calendar-bg-event-hover: rgba(0, 0, 0, 0.04);
+  
+  // Border colors
+  --calendar-border-primary: #e0e0e0;
+  --calendar-border-secondary: #f0f0f0;
+  
+  // Text colors
+  --calendar-text-primary: #3c4043;
+  --calendar-text-secondary: #70757a;
+  --calendar-text-muted: #80868b;
+  --calendar-text-time: #8c8c8c;
+  --calendar-text-event: #000000;
+  --calendar-text-future-event: #3c4043;
+  
+  // Accent colors
+  --calendar-accent-primary: #1a73e8;
+  
+  // Scrollbar colors
+  --calendar-scrollbar-track: #f1f1f1;
+  --calendar-scrollbar-thumb: #c1c1c1;
+  --calendar-scrollbar-thumb-hover: #a8a8a8;
+}
+
+// Dark theme
+.calendar-dark {
+  // Background colors
+  --calendar-bg-primary: #1f1f1f;
+  --calendar-bg-secondary: #2a2a2a;
+  --calendar-bg-hover: #2a2a2a;
+  --calendar-bg-today: #1e3a5f;
+  --calendar-bg-time-label: #1a1a1a;
+  --calendar-bg-day-hover: #2a3f5f;
+  --calendar-bg-event-hover: rgba(255, 255, 255, 0.08);
+  
+  // Border colors
+  --calendar-border-primary: #434343;
+  --calendar-border-secondary: #383838;
+  
+  // Text colors
+  --calendar-text-primary: #e8e8e8;
+  --calendar-text-secondary: #b8b8b8;
+  --calendar-text-muted: #808080;
+  --calendar-text-time: #999999;
+  --calendar-text-event: #ffffff;
+  --calendar-text-future-event: #d0d0d0;
+  
+  // Accent colors
+  --calendar-accent-primary: #4a9eff;
+  
+  // Scrollbar colors
+  --calendar-scrollbar-track: #2a2a2a;
+  --calendar-scrollbar-thumb: #4a4a4a;
+  --calendar-scrollbar-thumb-hover: #5a5a5a;
+}

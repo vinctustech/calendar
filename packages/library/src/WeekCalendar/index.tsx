@@ -44,6 +44,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   locale = en,
   onEventClick,
   onDayClick,
+  theme = 'light',
 }: WeekCalendarProps<T>) => {
   const bodyRef = React.useRef<HTMLDivElement>(null)
   const headerRef = React.useRef<HTMLDivElement>(null)
@@ -107,7 +108,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   }
 
   return (
-    <div className="week-calendar">
+    <div className={`week-calendar calendar-${theme}`}>
       {/* Header with days */}
       <div className="week-calendar-header" ref={headerRef}>
         <div className="week-calendar-time-column"></div>

@@ -81,6 +81,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
   daySelector,
   locale = en,
   ellipsis,
+  theme = 'light',
 }: MonthCalendarProps<T>) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
@@ -88,7 +89,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
   const month = date.getMonth()
 
   return (
-    <div className="month-calendar">
+    <div className={`month-calendar calendar-${theme}`}>
       {header && (
         <div className="month-calendar-header">
           <div className="month-calendar-month-display">
