@@ -115,8 +115,13 @@
       background-color: var(--calendar-bg-day-hover);
     }
 
-    // Past cell styles nested inside to ensure higher specificity
+    // Past cell styles - visual only
     &.week-calendar-time-cell-past {
+      // Visual styling only, no cursor
+    }
+
+    // Past cell interaction styles
+    &.week-calendar-time-cell-non-interactive {
       cursor: not-allowed;
 
       // Override hover to maintain cursor

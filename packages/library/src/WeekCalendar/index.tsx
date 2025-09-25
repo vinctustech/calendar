@@ -149,7 +149,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
               return (
                 <div
                   key={`${dayStr}-${hour}`}
-                  className={`week-calendar-time-cell ${isPast ? 'week-calendar-time-cell-past' : ''}`}
+                  className={`week-calendar-time-cell ${isPast ? 'week-calendar-time-cell-past week-calendar-time-cell-non-interactive' : ''}`}
                   onClick={(e) => {
                     // Only trigger if clicking on empty space, not on an event
                     if (

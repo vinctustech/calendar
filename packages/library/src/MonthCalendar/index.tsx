@@ -123,7 +123,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
               key={index}
               className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''}
                   ${isToday(dateObj.date) ? 'month-calendar-today' : ''}
-                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? 'month-calendar-past' : ''}
+                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? 'month-calendar-past month-calendar-past-non-interactive' : ''}
                   ${daySelector && isEqual(dateObj.date, selectedDate) ? 'month-calendar-selected' : ''}`}
               onClick={() => {
                 if (daySelector) {

@@ -1,6 +1,7 @@
 import { MonthCalendar, WeekCalendar, CalendarEvent, en } from '@vinctus/calendar'
 import { Button, Card, Space, Tabs, Switch } from 'antd'
 import { useState } from 'react'
+import './demo-themes.css'
 
 function App() {
   const [date, setDate] = useState(new Date())
@@ -66,28 +67,29 @@ function App() {
   ]
 
   return (
-    <Card>
-      <Space style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={goToPrevious}>
-          Previous Week
-        </Button>
-        <Button type="primary" onClick={goToNext}>
-          Next Week
-        </Button>
-        <Button onClick={() => setDate(new Date())}>Today</Button>
-        <Space style={{ marginLeft: 'auto' }}>
-          <span>Theme:</span>
-          <Switch
-            checked={theme === 'dark'}
-            onChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            checkedChildren="Dark"
-            unCheckedChildren="Light"
-          />
+    <div className={`demo-app demo-${theme}`}>
+      <Card>
+        <Space style={{ marginBottom: 16 }}>
+          <Button type="primary" onClick={goToPrevious}>
+            Previous Week
+          </Button>
+          <Button type="primary" onClick={goToNext}>
+            Next Week
+          </Button>
+          <Space style={{ marginLeft: 'auto' }}>
+            <span>Theme:</span>
+            <Switch
+              checked={theme === 'dark'}
+              onChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              checkedChildren="Dark"
+              unCheckedChildren="Light"
+            />
+          </Space>
         </Space>
-      </Space>
 
-      <Tabs items={items} />
-    </Card>
+        <Tabs items={items} />
+      </Card>
+    </div>
   )
 }
 

@@ -90,7 +90,6 @@
 
   .month-calendar-past {
     opacity: 0.6;
-    cursor: not-allowed;
 
     .month-calendar-date-number {
       color: var(--calendar-text-muted);
@@ -98,6 +97,13 @@
 
     .month-calendar-event {
       opacity: 0.8;
+    }
+  }
+
+  .month-calendar-past-non-interactive {
+    cursor: not-allowed;
+
+    .month-calendar-event {
       cursor: pointer; // Events should remain clickable even in past dates
     }
   }

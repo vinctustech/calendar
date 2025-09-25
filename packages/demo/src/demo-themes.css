@@ -1,0 +1,137 @@
+/* Demo App Theme Styling - Separate from Library */
+
+.demo-app {
+  transition: background-color 0.2s, color 0.2s;
+  padding: 16px;
+}
+
+/* Ensure body background matches theme */
+body:has(.demo-app.demo-dark) {
+  background-color: #141414;
+}
+
+body:has(.demo-app.demo-light) {
+  background-color: #ffffff;
+}
+
+/* Light Theme for Demo App */
+.demo-app.demo-light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.demo-app.demo-light .ant-card {
+  background-color: #ffffff;
+  border-color: #d9d9d9;
+}
+
+.demo-app.demo-light .ant-card-head {
+  background-color: #fafafa;
+  border-bottom-color: #f0f0f0;
+}
+
+.demo-app.demo-light .ant-btn {
+  border-color: #d9d9d9;
+}
+
+.demo-app.demo-light .ant-btn-primary {
+  background-color: #1677ff;
+  border-color: #1677ff;
+}
+
+.demo-app.demo-light .ant-switch {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.demo-app.demo-light .ant-switch-checked {
+  background-color: #1677ff;
+}
+
+.demo-app.demo-light .ant-tabs-tab {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.demo-app.demo-light .ant-tabs-tab-active {
+  color: #1677ff;
+}
+
+.demo-app.demo-light .ant-tabs-ink-bar {
+  background-color: #1677ff;
+}
+
+/* Dark Theme for Demo App */
+.demo-app.demo-dark {
+  background-color: #141414;
+  color: #ffffff;
+  min-height: 100vh; /* Ensure full height coverage */
+}
+
+.demo-app.demo-dark .ant-card {
+  background-color: #1f1f1f;
+  border-color: #434343;
+}
+
+.demo-app.demo-dark .ant-card-head {
+  background-color: #262626;
+  border-bottom-color: #434343;
+  color: #ffffff;
+}
+
+.demo-app.demo-dark .ant-btn {
+  background-color: #1f1f1f;
+  border-color: #434343;
+  color: #ffffff;
+}
+
+.demo-app.demo-dark .ant-btn:hover {
+  background-color: #262626;
+  border-color: #595959;
+}
+
+.demo-app.demo-dark .ant-btn-primary {
+  background-color: #1677ff;
+  border-color: #1677ff;
+}
+
+.demo-app.demo-dark .ant-btn-primary:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+.demo-app.demo-dark .ant-switch {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.demo-app.demo-dark .ant-switch-checked {
+  background-color: #1677ff;
+}
+
+.demo-app.demo-dark .ant-tabs-tab {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.demo-app.demo-dark .ant-tabs-tab-active {
+  color: #1677ff;
+}
+
+.demo-app.demo-dark .ant-tabs-ink-bar {
+  background-color: #4096ff; /* Softer blue for dark theme */
+}
+
+.demo-app.demo-dark .ant-tabs-content {
+  color: #ffffff;
+  background-color: #141414;
+}
+
+.demo-app.demo-dark .ant-tabs-content-holder {
+  background-color: #141414;
+}
+
+.demo-app.demo-dark .ant-tabs-tabpane {
+  background-color: #141414;
+}
+
+/* Space component styling */
+.demo-app.demo-dark .ant-space-item span {
+  color: #ffffff;
+}
