@@ -90,6 +90,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
   locale = en,
   ellipsis,
   theme = 'light',
+  allowPastInteraction = false,
 }: MonthCalendarProps<T>) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
@@ -123,9 +124,14 @@ export const MonthCalendar = <T extends CalendarEvent>({
               key={index}
               className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''}
                   ${isToday(dateObj.date) ? 'month-calendar-today' : ''}
-                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? 'month-calendar-past month-calendar-past-non-interactive' : ''}
+                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? `month-calendar-past${!allowPastInteraction ? ' month-calendar-past-non-interactive' : ''}` : ''}
                   ${daySelector && isEqual(dateObj.date, selectedDate) ? 'month-calendar-selected' : ''}`}
               onClick={() => {
+                // Prevent interaction with past dates when allowPastInteraction is false
+                if (isPastDate(dateObj.date) && !isToday(dateObj.date) && !allowPastInteraction) {
+                  return
+                }
+
                 if (daySelector) {
                   setSelectedDate(dateObj.date)
                 }

@@ -31,6 +31,10 @@
     }
 
     &.week-calendar-day-header-past {
+      // Visual styling for past day headers (currently none, ready for future styling)
+    }
+
+    &.week-calendar-day-header-past-non-interactive {
       cursor: not-allowed;
     }
   }

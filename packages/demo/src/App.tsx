@@ -6,6 +6,7 @@ import './demo-themes.css'
 function App() {
   const [date, setDate] = useState(new Date())
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [allowPastInteraction, setAllowPastInteraction] = useState(false)
 
   const goToPrevious = () => {
     setDate((prevDate) => {
@@ -37,6 +38,7 @@ function App() {
             ellipsis={true}
             daySelector
             theme={theme}
+            allowPastInteraction={allowPastInteraction}
             onDayClick={(date) => alert(`Month view day clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
           />
@@ -53,6 +55,7 @@ function App() {
             events={sampleEvents}
             locale={en}
             theme={theme}
+            allowPastInteraction={allowPastInteraction}
             onDayClick={(date) => alert(`Week view day header clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
             onSelectSlot={(slotInfo) =>
@@ -77,6 +80,13 @@ function App() {
             Next Week
           </Button>
           <Space style={{ marginLeft: 'auto' }}>
+            <span>Past Interaction:</span>
+            <Switch
+              checked={allowPastInteraction}
+              onChange={setAllowPastInteraction}
+              checkedChildren="Allow"
+              unCheckedChildren="Block"
+            />
             <span>Theme:</span>
             <Switch
               checked={theme === 'dark'}

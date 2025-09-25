@@ -15,6 +15,7 @@ export type BaseCalendarProps<T extends CalendarEvent = CalendarEvent> = {
   onDayClick?: (date: Date) => void
   locale?: CalendarLocale
   theme?: 'light' | 'dark'
+  allowPastInteraction?: boolean // Default: false - when true, past cells remain clickable while keeping visual styling
 }
 
 export type CalendarLocale = {

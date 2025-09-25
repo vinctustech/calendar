@@ -46,6 +46,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   onDayClick,
   onSelectSlot,
   theme = 'light',
+  allowPastInteraction = false,
 }: WeekCalendarProps<T>) => {
   const bodyRef = React.useRef<HTMLDivElement>(null)
   const headerRef = React.useRef<HTMLDivElement>(null)
@@ -120,8 +121,14 @@ export const WeekCalendar = <T extends CalendarEvent>({
           return (
             <div
               key={formatDate(day, 'YYYY-MM-DD')}
-              className={`week-calendar-day-header ${isPast ? 'week-calendar-day-header-past' : ''}`}
-              onClick={() => onDayClick?.(day)}
+              className={`week-calendar-day-header ${isPast ? `week-calendar-day-header-past${!allowPastInteraction ? ' week-calendar-day-header-past-non-interactive' : ''}` : ''}`}
+              onClick={() => {
+                // Prevent interaction with past day headers when allowPastInteraction is false
+                if (isPast && !allowPastInteraction) {
+                  return
+                }
+                onDayClick?.(day)
+              }}
             >
               <div className={`week-calendar-day-name ${isPast ? 'week-calendar-day-name-past' : ''}`}>
                 {formatDate(day, 'ddd')}
@@ -149,8 +156,13 @@ export const WeekCalendar = <T extends CalendarEvent>({
               return (
                 <div
                   key={`${dayStr}-${hour}`}
-                  className={`week-calendar-time-cell ${isPast ? 'week-calendar-time-cell-past week-calendar-time-cell-non-interactive' : ''}`}
+                  className={`week-calendar-time-cell ${isPast ? `week-calendar-time-cell-past${!allowPastInteraction ? ' week-calendar-time-cell-non-interactive' : ''}` : ''}`}
                   onClick={(e) => {
+                    // Prevent interaction with past time slots when allowPastInteraction is false
+                    if (isPast && !allowPastInteraction) {
+                      return
+                    }
+
                     // Only trigger if clicking on empty space, not on an event
                     if (
                       onSelectSlot &&
@@ -167,7 +179,9 @@ export const WeekCalendar = <T extends CalendarEvent>({
                       onSelectSlot({ start, end })
                     }
                   }}
-                  style={{ cursor: isPast ? 'not-allowed' : onSelectSlot ? 'pointer' : 'default' }}
+                  style={{
+                    cursor: isPast && !allowPastInteraction ? 'not-allowed' : onSelectSlot ? 'pointer' : 'default',
+                  }}
                 >
                   {hourEvents.map((event, idx) => {
                     const eventClasses = ['week-calendar-event']
