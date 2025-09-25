@@ -1,9 +1,10 @@
 import { MonthCalendar, WeekCalendar, CalendarEvent, en } from '@vinctus/calendar'
-import { Button, Card, Space, Tabs } from 'antd'
+import { Button, Card, Space, Tabs, Switch } from 'antd'
 import { useState } from 'react'
 
 function App() {
   const [date, setDate] = useState(new Date())
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   const goToPrevious = () => {
     setDate((prevDate) => {
@@ -34,7 +35,8 @@ function App() {
             locale={en}
             ellipsis={true}
             daySelector
-            onDayClick={(date) => alert(`Month view clicked: ${date}`)}
+            theme={theme}
+            onDayClick={(date) => alert(`Month view day clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
           />
         </div>
@@ -49,8 +51,14 @@ function App() {
             date={date}
             events={sampleEvents}
             locale={en}
-            onDayClick={(date) => alert(`Week view clicked: ${date}`)}
+            theme={theme}
+            onDayClick={(date) => alert(`Week view day header clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
+            onSelectSlot={(slotInfo) =>
+              alert(
+                `Week view time slot clicked: ${slotInfo.start.toLocaleString()} - ${slotInfo.end.toLocaleString()}`,
+              )
+            }
           />
         </div>
       ),
@@ -66,17 +74,44 @@ function App() {
         <Button type="primary" onClick={goToNext}>
           Next Week
         </Button>
-        <Button onClick={() => setDate(new Date())}>
-          Today
-        </Button>
+        <Button onClick={() => setDate(new Date())}>Today</Button>
+        <Space style={{ marginLeft: 'auto' }}>
+          <span>Theme:</span>
+          <Switch
+            checked={theme === 'dark'}
+            onChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+            checkedChildren="Dark"
+            unCheckedChildren="Light"
+          />
+        </Space>
       </Space>
-      
+
       <Tabs items={items} />
     </Card>
   )
 }
 
 const sampleEvents: CalendarEvent[] = [
+  // Past events (for demonstrating past date styling)
+  {
+    date: new Date(2025, 8, 20, 9, 30),
+    title: '9:30am\u2002Past Event\u2002Meeting\u2002Conference Room',
+    color: '#bfbfbf',
+    strikethrough: false,
+  },
+  {
+    date: new Date(2025, 8, 22, 14, 0),
+    title: '2:00pm\u2002Past Event\u2002Review\u2002Office',
+    color: '#60be23',
+    strikethrough: false,
+  },
+  {
+    date: new Date(2025, 8, 23, 10, 30),
+    title: '10:30am\u2002Past Event\u2002Workshop\u2002Training Room',
+    color: '#e25263',
+    strikethrough: false,
+  },
+  // Future events
   {
     date: new Date(2025, 1, 28, 9, 30),
     title: '9:30am\u2002Jane Smith\u2002Shuttle Drop-off\u2002Alpha Store',

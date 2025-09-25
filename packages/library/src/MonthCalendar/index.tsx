@@ -1,7 +1,15 @@
 import { useState } from 'react'
 import './styles.scss'
 import { CalendarEvent, BaseCalendarProps, CalendarLocale } from '../shared/types'
-import { isToday, isEqual, isFutureDate, getEventsForDate, getDaysInMonth, getFirstDayOfMonth } from '../shared/utils'
+import {
+  isToday,
+  isEqual,
+  isFutureDate,
+  isPastDate,
+  getEventsForDate,
+  getDaysInMonth,
+  getFirstDayOfMonth,
+} from '../shared/utils'
 import { en } from '../shared/locales'
 
 const generateCalendarGrid = (year: number, month: number) => {
@@ -113,8 +121,9 @@ export const MonthCalendar = <T extends CalendarEvent>({
           return (
             <div
               key={index}
-              className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''} 
-                  ${isToday(dateObj.date) ? 'month-calendar-today' : ''} 
+              className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''}
+                  ${isToday(dateObj.date) ? 'month-calendar-today' : ''}
+                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? 'month-calendar-past' : ''}
                   ${daySelector && isEqual(dateObj.date, selectedDate) ? 'month-calendar-selected' : ''}`}
               onClick={() => {
                 if (daySelector) {
@@ -128,7 +137,9 @@ export const MonthCalendar = <T extends CalendarEvent>({
               }}
             >
               <div className="month-calendar-date-number-container">
-                <span className={`month-calendar-date-number ${isToday(dateObj.date) ? 'month-calendar-today-number' : ''}`}>
+                <span
+                  className={`month-calendar-date-number ${isToday(dateObj.date) ? 'month-calendar-today-number' : ''}`}
+                >
                   {dateObj.day}
                 </span>
               </div>
@@ -153,7 +164,9 @@ export const MonthCalendar = <T extends CalendarEvent>({
                       title={event.title}
                     >
                       <span className="month-calendar-event-dot" style={{ backgroundColor: event.color }}></span>
-                      <span className={`month-calendar-event-title ${ellipsis ? 'month-calendar-ellipsis' : ''}`}>{event.title}</span>
+                      <span className={`month-calendar-event-title ${ellipsis ? 'month-calendar-ellipsis' : ''}`}>
+                        {event.title}
+                      </span>
                     </div>
                   ))}
                 {dateEvents.length > maxEventsPerDay && (

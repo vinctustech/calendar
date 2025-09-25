@@ -144,14 +144,19 @@ export const WeekCalendar = <T extends CalendarEvent>({
             {weekDays.map((day) => {
               const dayStr = formatDate(day, 'YYYY-MM-DD')
               const hourEvents = getEventsForDayAndHour(dayStr, hour)
+              const isPast = isPastDate(day) && !isToday(day)
 
               return (
                 <div
                   key={`${dayStr}-${hour}`}
-                  className="week-calendar-time-cell"
+                  className={`week-calendar-time-cell ${isPast ? 'week-calendar-time-cell-past' : ''}`}
                   onClick={(e) => {
                     // Only trigger if clicking on empty space, not on an event
-                    if (onSelectSlot && (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('week-calendar-time-cell'))) {
+                    if (
+                      onSelectSlot &&
+                      (e.target === e.currentTarget ||
+                        (e.target as HTMLElement).classList.contains('week-calendar-time-cell'))
+                    ) {
                       // Create start and end dates for the time slot
                       const start = new Date(day)
                       start.setHours(hour, 0, 0, 0)
@@ -162,7 +167,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
                       onSelectSlot({ start, end })
                     }
                   }}
-                  style={{ cursor: onSelectSlot ? 'pointer' : 'default' }}
+                  style={{ cursor: isPast ? 'not-allowed' : onSelectSlot ? 'pointer' : 'default' }}
                 >
                   {hourEvents.map((event, idx) => {
                     const eventClasses = ['week-calendar-event']
@@ -175,6 +180,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
                         key={idx}
                         className={eventClasses.join(' ')}
                         style={event.style}
+                        title={event.title}
                         onClick={(e) => {
                           e.stopPropagation()
                           onEventClick?.(event)

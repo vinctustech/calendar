@@ -29,6 +29,10 @@
     &:hover {
       background-color: var(--calendar-bg-day-hover);
     }
+
+    &.week-calendar-day-header-past {
+      cursor: not-allowed;
+    }
   }
 
   .week-calendar-day-name {
@@ -109,6 +113,21 @@
 
     &:hover {
       background-color: var(--calendar-bg-day-hover);
+    }
+
+    // Past cell styles nested inside to ensure higher specificity
+    &.week-calendar-time-cell-past {
+      cursor: not-allowed;
+
+      // Override hover to maintain cursor
+      &:hover {
+        cursor: not-allowed;
+        background-color: var(--calendar-bg-day-hover);
+      }
+
+      .week-calendar-event {
+        cursor: pointer; // Events should remain clickable even in past dates
+      }
     }
   }
 
