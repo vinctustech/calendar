@@ -179,9 +179,6 @@ export const WeekCalendar = <T extends CalendarEvent>({
                       onSelectSlot({ start, end })
                     }
                   }}
-                  style={{
-                    cursor: isPast && !allowPastInteraction ? 'not-allowed' : onSelectSlot ? 'pointer' : 'default',
-                  }}
                 >
                   {hourEvents.map((event, idx) => {
                     const eventClasses = ['week-calendar-event']

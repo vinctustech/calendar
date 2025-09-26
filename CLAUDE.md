@@ -37,6 +37,14 @@ npm run clean
 npm run publish
 ```
 
+## Development Workflow
+
+**IMPORTANT:** Always rebuild and fix any errors after making code changes:
+```bash
+npm run build
+```
+This ensures changes compile correctly and catches TypeScript/build errors early.
+
 ## Architecture
 
 ### Library Package (`packages/library/`)

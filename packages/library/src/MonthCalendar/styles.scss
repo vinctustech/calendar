@@ -54,6 +54,7 @@
     border-right: 1px solid var(--calendar-border-primary);
     border-bottom: 1px solid var(--calendar-border-primary);
     overflow: hidden;
+    cursor: pointer;
 
     &:hover {
       background-color: var(--calendar-bg-hover);
