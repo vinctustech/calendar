@@ -70,9 +70,8 @@ export const WeekCalendar = <T extends CalendarEvent>({
   // Scroll to 9am on mount
   React.useEffect(() => {
     if (bodyRef.current) {
-      // 9am is the 4th time slot (6am=0, 7am=1, 8am=2, 9am=3)
-      // Each time slot is 80px tall
-      bodyRef.current.scrollTop = 3 * 80
+      // Scroll to 9am: each time slot is 80px tall
+      bodyRef.current.scrollTop = 9 * 80
     }
   }, [date]) // Re-scroll when date changes
 
@@ -92,8 +91,8 @@ export const WeekCalendar = <T extends CalendarEvent>({
     return grouped
   }, [events])
 
-  // Time slots from 6 AM to 10 PM
-  const timeSlots = Array.from({ length: 17 }, (_, i) => i + 6) // 6-22 (6 AM to 10 PM)
+  // Time slots for full 24 hours
+  const timeSlots = Array.from({ length: 24 }, (_, i) => i) // 0-23 (12 AM to 11 PM)
 
   const formatHour = (hour: number) => {
     return locale.formatTime
