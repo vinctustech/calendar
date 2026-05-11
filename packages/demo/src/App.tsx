@@ -1,12 +1,25 @@
-import { MonthCalendar, WeekCalendar, CalendarEvent, en } from '@vinctus/calendar'
+import { MonthCalendar, WeekCalendar, CalendarEvent, BusinessHours, en } from '@vinctus/calendar'
 import { Button, Card, Space, Tabs, Switch } from 'antd'
 import { useState } from 'react'
 import './demo-themes.css'
+
+// Sample hours: weekdays 9-17, Saturday 10-14, Sunday closed.
+const sampleBusinessHours: BusinessHours = [
+  null, // Sunday
+  { start: '09:00', end: '17:00' }, // Monday
+  { start: '09:00', end: '17:00' }, // Tuesday
+  { start: '09:00', end: '17:00' }, // Wednesday
+  { start: '09:00', end: '17:00' }, // Thursday
+  { start: '09:00', end: '17:00' }, // Friday
+  { start: '10:00', end: '14:00' }, // Saturday
+]
 
 function App() {
   const [date, setDate] = useState(new Date())
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [allowPastInteraction, setAllowPastInteraction] = useState(false)
+  const [enforceBusinessHours, setEnforceBusinessHours] = useState(false)
+  const businessHours = enforceBusinessHours ? sampleBusinessHours : undefined
 
   const goToPrevious = () => {
     setDate((prevDate) => {
@@ -39,6 +52,7 @@ function App() {
             daySelector
             theme={theme}
             allowPastInteraction={allowPastInteraction}
+            businessHours={businessHours}
             onDayClick={(date) => alert(`Month view day clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
           />
@@ -56,6 +70,7 @@ function App() {
             locale={en}
             theme={theme}
             allowPastInteraction={allowPastInteraction}
+            businessHours={businessHours}
             onDayClick={(date) => alert(`Week view day header clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
             onSelectSlot={(slotInfo) =>
@@ -80,6 +95,13 @@ function App() {
             Next Week
           </Button>
           <Space style={{ marginLeft: 'auto' }}>
+            <span>Business Hours:</span>
+            <Switch
+              checked={enforceBusinessHours}
+              onChange={setEnforceBusinessHours}
+              checkedChildren="On"
+              unCheckedChildren="Off"
+            />
             <span>Past Interaction:</span>
             <Switch
               checked={allowPastInteraction}

@@ -91,6 +91,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
   ellipsis,
   theme = 'light',
   allowPastInteraction = false,
+  businessHours,
 }: MonthCalendarProps<T>) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
@@ -118,15 +119,29 @@ export const MonthCalendar = <T extends CalendarEvent>({
       <div className="month-calendar-grid">
         {generateCalendarGrid(year, month).map((dateObj, index) => {
           const dateEvents = getEventsForDate(events, dateObj.date)
+          const isClosedDay = businessHours ? !businessHours[dateObj.date.getDay()] : false
+
+          const cellClasses = ['month-calendar-cell']
+          if (!dateObj.isCurrentMonth) cellClasses.push('month-calendar-other-month')
+          if (isToday(dateObj.date)) cellClasses.push('month-calendar-today')
+          if (isPastDate(dateObj.date) && !isToday(dateObj.date)) {
+            cellClasses.push('month-calendar-past')
+            if (!allowPastInteraction) cellClasses.push('month-calendar-past-non-interactive')
+          }
+          if (isClosedDay) cellClasses.push('month-calendar-closed')
+          if (daySelector && isEqual(dateObj.date, selectedDate))
+            cellClasses.push('month-calendar-selected')
 
           return (
             <div
               key={index}
-              className={`month-calendar-cell ${!dateObj.isCurrentMonth ? 'month-calendar-other-month' : ''}
-                  ${isToday(dateObj.date) ? 'month-calendar-today' : ''}
-                  ${isPastDate(dateObj.date) && !isToday(dateObj.date) ? `month-calendar-past${!allowPastInteraction ? ' month-calendar-past-non-interactive' : ''}` : ''}
-                  ${daySelector && isEqual(dateObj.date, selectedDate) ? 'month-calendar-selected' : ''}`}
+              className={cellClasses.join(' ')}
               onClick={() => {
+                // Prevent interaction with closed weekdays
+                if (isClosedDay) {
+                  return
+                }
+
                 // Prevent interaction with past dates when allowPastInteraction is false
                 if (isPastDate(dateObj.date) && !isToday(dateObj.date) && !allowPastInteraction) {
                   return

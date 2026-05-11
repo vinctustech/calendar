@@ -109,6 +109,26 @@
     }
   }
 
+  // Closed weekday (businessHours null for this weekday): render as a
+  // non-interactive blank cell. Events on closed days remain clickable.
+  .month-calendar-closed {
+    background-color: var(--calendar-bg-secondary);
+    cursor: default;
+
+    .month-calendar-date-number {
+      color: var(--calendar-text-muted);
+    }
+
+    &:hover {
+      background-color: var(--calendar-bg-secondary);
+      cursor: default;
+    }
+
+    .month-calendar-event {
+      cursor: pointer;
+    }
+  }
+
   .month-calendar-today {
     background-color: var(--calendar-bg-today);
 

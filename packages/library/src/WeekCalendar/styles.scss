@@ -37,6 +37,15 @@
     &.week-calendar-day-header-past-non-interactive {
       cursor: not-allowed;
     }
+
+    &.week-calendar-day-header-closed {
+      cursor: default;
+
+      &:hover {
+        background-color: transparent;
+        cursor: default;
+      }
+    }
   }
 
   .week-calendar-day-name {
@@ -137,6 +146,21 @@
 
       .week-calendar-event {
         cursor: pointer; // Events should remain clickable even in past dates
+      }
+    }
+
+    // Outside business hours: render as blank and non-interactive.
+    &.week-calendar-time-cell-closed {
+      cursor: default;
+      background: var(--calendar-bg-secondary);
+
+      &:hover {
+        background-color: var(--calendar-bg-secondary);
+        cursor: default;
+      }
+
+      .week-calendar-event {
+        cursor: pointer; // Events on closed days remain clickable for viewing
       }
     }
   }

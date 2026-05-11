@@ -1,8 +1,46 @@
 import React, { useMemo } from 'react'
 import './styles.scss'
-import { CalendarEvent, BaseCalendarProps } from '../shared/types'
+import { CalendarEvent, BaseCalendarProps, BusinessHours, DayHours } from '../shared/types'
 import { isEqual, isToday, isPastDate } from '../shared/utils'
 import { en } from '../shared/locales'
+
+// Parse "HH:mm" (24h) into a { h, m } pair. Invalid input falls back to 0.
+const parseHhMm = (s: string): { h: number; m: number } => {
+  const [h, m] = s.split(':').map((n) => parseInt(n, 10))
+  return { h: isNaN(h) ? 0 : h, m: isNaN(m) ? 0 : m }
+}
+
+// Compute the visible hour range [startHour, endHourExclusive) as the union
+// of the open windows across the given weekdays. Returns null when every
+// visible weekday is closed (caller renders no rows).
+const computeWeekHourRange = (
+  businessHours: BusinessHours,
+  weekdays: number[],
+): [number, number] | null => {
+  let minStart = Infinity
+  let maxEnd = -Infinity
+  for (const dow of weekdays) {
+    const hours = businessHours[dow]
+    if (!hours) continue
+    const { h: sh } = parseHhMm(hours.start)
+    const { h: eh, m: em } = parseHhMm(hours.end)
+    const endHourCeil = em > 0 ? eh + 1 : eh
+    if (sh < minStart) minStart = sh
+    if (endHourCeil > maxEnd) maxEnd = endHourCeil
+  }
+  if (!isFinite(minStart) || !isFinite(maxEnd) || maxEnd <= minStart) return null
+  return [Math.max(0, minStart), Math.min(24, maxEnd)]
+}
+
+// True when the given hour (0-23) falls inside the day's open window.
+// An undefined/null entry means the weekday is closed.
+const isHourOpen = (hours: DayHours, hour: number): boolean => {
+  if (!hours) return false
+  const { h: sh } = parseHhMm(hours.start)
+  const { h: eh, m: em } = parseHhMm(hours.end)
+  const endHourExclusive = em > 0 ? eh + 1 : eh
+  return hour >= sh && hour < endHourExclusive
+}
 
 // Simple date utility functions to replace dayjs
 const getWeekStart = (date: Date): Date => {
@@ -47,6 +85,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   onSelectSlot,
   theme = 'light',
   allowPastInteraction = false,
+  businessHours,
 }: WeekCalendarProps<T>) => {
   const bodyRef = React.useRef<HTMLDivElement>(null)
   const headerRef = React.useRef<HTMLDivElement>(null)
@@ -67,14 +106,6 @@ export const WeekCalendar = <T extends CalendarEvent>({
     return () => window.removeEventListener('resize', adjustScrollbar)
   }, [])
 
-  // Scroll to 9am on mount
-  React.useEffect(() => {
-    if (bodyRef.current) {
-      // Scroll to 9am: each time slot is 80px tall
-      bodyRef.current.scrollTop = 9 * 80
-    }
-  }, [date]) // Re-scroll when date changes
-
   const weekStart = getWeekStart(date)
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 
@@ -91,8 +122,28 @@ export const WeekCalendar = <T extends CalendarEvent>({
     return grouped
   }, [events])
 
-  // Time slots for full 24 hours
-  const timeSlots = Array.from({ length: 24 }, (_, i) => i) // 0-23 (12 AM to 11 PM)
+  // Hour range: union of open windows across the visible week when
+  // businessHours is provided, otherwise the full day.
+  const hourRange = useMemo<[number, number]>(() => {
+    if (!businessHours) return [0, 24]
+    const visibleWeekdays = weekDays.map((d) => d.getDay())
+    const computed = computeWeekHourRange(businessHours, visibleWeekdays)
+    return computed ?? [0, 0] // all closed → render no rows
+  }, [businessHours, weekDays])
+
+  const [startHour, endHour] = hourRange
+  const timeSlots = useMemo(
+    () => Array.from({ length: Math.max(0, endHour - startHour) }, (_, i) => startHour + i),
+    [startHour, endHour],
+  )
+
+  // Scroll to 9am when showing the full day; otherwise the first rendered row
+  // already is the start of business hours.
+  React.useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = businessHours ? 0 : 9 * 80
+    }
+  }, [date, businessHours])
 
   const formatHour = (hour: number) => {
     return locale.formatTime
@@ -116,12 +167,24 @@ export const WeekCalendar = <T extends CalendarEvent>({
         {weekDays.map((day) => {
           const isPast = isPastDate(day)
           const isTodayDate = isToday(day)
+          const isClosedDay = businessHours ? !businessHours[day.getDay()] : false
+
+          const headerClasses = ['week-calendar-day-header']
+          if (isPast) {
+            headerClasses.push('week-calendar-day-header-past')
+            if (!allowPastInteraction) headerClasses.push('week-calendar-day-header-past-non-interactive')
+          }
+          if (isClosedDay) headerClasses.push('week-calendar-day-header-closed')
 
           return (
             <div
               key={formatDate(day, 'YYYY-MM-DD')}
-              className={`week-calendar-day-header ${isPast ? `week-calendar-day-header-past${!allowPastInteraction ? ' week-calendar-day-header-past-non-interactive' : ''}` : ''}`}
+              className={headerClasses.join(' ')}
               onClick={() => {
+                // Prevent interaction with closed day headers
+                if (isClosedDay) {
+                  return
+                }
                 // Prevent interaction with past day headers when allowPastInteraction is false
                 if (isPast && !allowPastInteraction) {
                   return
@@ -151,12 +214,27 @@ export const WeekCalendar = <T extends CalendarEvent>({
               const dayStr = formatDate(day, 'YYYY-MM-DD')
               const hourEvents = getEventsForDayAndHour(dayStr, hour)
               const isPast = isPastDate(day) && !isToday(day)
+              const isClosed = businessHours
+                ? !isHourOpen(businessHours[day.getDay()] ?? null, hour)
+                : false
+
+              const cellClasses = ['week-calendar-time-cell']
+              if (isPast) {
+                cellClasses.push('week-calendar-time-cell-past')
+                if (!allowPastInteraction) cellClasses.push('week-calendar-time-cell-non-interactive')
+              }
+              if (isClosed) cellClasses.push('week-calendar-time-cell-closed')
 
               return (
                 <div
                   key={`${dayStr}-${hour}`}
-                  className={`week-calendar-time-cell ${isPast ? `week-calendar-time-cell-past${!allowPastInteraction ? ' week-calendar-time-cell-non-interactive' : ''}` : ''}`}
+                  className={cellClasses.join(' ')}
                   onClick={(e) => {
+                    // Prevent interaction with closed slots
+                    if (isClosed) {
+                      return
+                    }
+
                     // Prevent interaction with past time slots when allowPastInteraction is false
                     if (isPast && !allowPastInteraction) {
                       return
