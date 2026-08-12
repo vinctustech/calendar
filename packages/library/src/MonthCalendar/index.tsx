@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './styles.scss'
-import { CalendarEvent, BaseCalendarProps, CalendarLocale } from '../shared/types'
+import { CalendarEvent, BaseCalendarProps, CalendarLocale, ClosedRange } from '../shared/types'
 import {
   isToday,
   isEqual,
@@ -70,6 +70,15 @@ const generateCalendarGrid = (year: number, month: number) => {
   return [...prevMonthDays, ...currentMonthDays, ...nextMonthDays]
 }
 
+// True when a range covers the entire civil day of `date`.
+const isDayInClosedRanges = (date: Date, ranges: ClosedRange[]): boolean => {
+  const dayStart = new Date(date)
+  dayStart.setHours(0, 0, 0, 0)
+  const dayEnd = new Date(dayStart)
+  dayEnd.setDate(dayEnd.getDate() + 1)
+  return ranges.some((range) => range.start <= dayStart && range.end >= dayEnd)
+}
+
 export type MonthCalendarProps<T extends CalendarEvent = CalendarEvent> = BaseCalendarProps<T> & {
   maxEventsPerDay?: number
   onMoreEventsClick?: (date: Date, events: T[]) => void
@@ -92,6 +101,7 @@ export const MonthCalendar = <T extends CalendarEvent>({
   theme = 'light',
   allowPastInteraction = false,
   businessHours,
+  closedRanges,
 }: MonthCalendarProps<T>) => {
   const [selectedDate, setSelectedDate] = useState(new Date())
 
@@ -119,7 +129,9 @@ export const MonthCalendar = <T extends CalendarEvent>({
       <div className="month-calendar-grid">
         {generateCalendarGrid(year, month).map((dateObj, index) => {
           const dateEvents = getEventsForDate(events, dateObj.date)
-          const isClosedDay = businessHours ? !businessHours[dateObj.date.getDay()] : false
+          const isClosedDay =
+            (businessHours ? !businessHours[dateObj.date.getDay()] : false) ||
+            (closedRanges ? isDayInClosedRanges(dateObj.date, closedRanges) : false)
 
           const cellClasses = ['month-calendar-cell']
           if (!dateObj.isCurrentMonth) cellClasses.push('month-calendar-other-month')

@@ -1,4 +1,4 @@
-import { MonthCalendar, WeekCalendar, CalendarEvent, BusinessHours, en } from '@vinctus/calendar'
+import { MonthCalendar, WeekCalendar, CalendarEvent, BusinessHours, ClosedRange, en } from '@vinctus/calendar'
 import { Button, Card, Space, Tabs, Switch } from 'antd'
 import { useState } from 'react'
 import './demo-themes.css'
@@ -14,12 +14,26 @@ const sampleBusinessHours: BusinessHours = [
   { start: '10:00', end: '14:00' }, // Saturday
 ]
 
+// Sample closed ranges: tomorrow fully closed, a midday window two days out.
+const dayStart = (offset: number, hour = 0) => {
+  const d = new Date()
+  d.setDate(d.getDate() + offset)
+  d.setHours(hour, 0, 0, 0)
+  return d
+}
+const sampleClosedRanges: ClosedRange[] = [
+  { start: dayStart(1), end: dayStart(2) },
+  { start: dayStart(2, 12), end: dayStart(2, 15) },
+]
+
 function App() {
   const [date, setDate] = useState(new Date())
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [allowPastInteraction, setAllowPastInteraction] = useState(false)
   const [enforceBusinessHours, setEnforceBusinessHours] = useState(false)
+  const [showClosedRanges, setShowClosedRanges] = useState(false)
   const businessHours = enforceBusinessHours ? sampleBusinessHours : undefined
+  const closedRanges = showClosedRanges ? sampleClosedRanges : undefined
 
   const goToPrevious = () => {
     setDate((prevDate) => {
@@ -53,6 +67,7 @@ function App() {
             theme={theme}
             allowPastInteraction={allowPastInteraction}
             businessHours={businessHours}
+            closedRanges={closedRanges}
             onDayClick={(date) => alert(`Month view day clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
           />
@@ -71,6 +86,7 @@ function App() {
             theme={theme}
             allowPastInteraction={allowPastInteraction}
             businessHours={businessHours}
+            closedRanges={closedRanges}
             onDayClick={(date) => alert(`Week view day header clicked: ${date}`)}
             onEventClick={(event) => alert(`Event: ${event.title}`)}
             onSelectSlot={(slotInfo) =>
@@ -99,6 +115,13 @@ function App() {
             <Switch
               checked={enforceBusinessHours}
               onChange={setEnforceBusinessHours}
+              checkedChildren="On"
+              unCheckedChildren="Off"
+            />
+            <span>Closed Ranges:</span>
+            <Switch
+              checked={showClosedRanges}
+              onChange={setShowClosedRanges}
               checkedChildren="On"
               unCheckedChildren="Off"
             />

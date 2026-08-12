@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import './styles.scss'
-import { CalendarEvent, BaseCalendarProps, BusinessHours, DayHours } from '../shared/types'
+import { CalendarEvent, BaseCalendarProps, BusinessHours, ClosedRange, DayHours } from '../shared/types'
 import { isEqual, isToday, isPastDate } from '../shared/utils'
 import { en } from '../shared/locales'
 
@@ -30,6 +30,15 @@ const computeWeekHourRange = (
   }
   if (!isFinite(minStart) || !isFinite(maxEnd) || maxEnd <= minStart) return null
   return [Math.max(0, minStart), Math.min(24, maxEnd)]
+}
+
+// True when the one-hour slot starting at `hour` on `day` overlaps any range.
+const isHourInClosedRanges = (day: Date, hour: number, ranges: ClosedRange[]): boolean => {
+  const slotStart = new Date(day)
+  slotStart.setHours(hour, 0, 0, 0)
+  const slotEnd = new Date(day)
+  slotEnd.setHours(hour + 1, 0, 0, 0)
+  return ranges.some((range) => range.start < slotEnd && range.end > slotStart)
 }
 
 // True when the given hour (0-23) falls inside the day's open window.
@@ -86,6 +95,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
   theme = 'light',
   allowPastInteraction = false,
   businessHours,
+  closedRanges,
 }: WeekCalendarProps<T>) => {
   const bodyRef = React.useRef<HTMLDivElement>(null)
   const headerRef = React.useRef<HTMLDivElement>(null)
@@ -137,6 +147,11 @@ export const WeekCalendar = <T extends CalendarEvent>({
     [startHour, endHour],
   )
 
+  // Closed either by weekday business hours or by a date-specific closed range.
+  const isCellClosed = (day: Date, hour: number): boolean =>
+    (businessHours ? !isHourOpen(businessHours[day.getDay()] ?? null, hour) : false) ||
+    (closedRanges ? isHourInClosedRanges(day, hour, closedRanges) : false)
+
   // Scroll to 9am when showing the full day; otherwise the first rendered row
   // already is the start of business hours.
   React.useEffect(() => {
@@ -167,7 +182,9 @@ export const WeekCalendar = <T extends CalendarEvent>({
         {weekDays.map((day) => {
           const isPast = isPastDate(day)
           const isTodayDate = isToday(day)
-          const isClosedDay = businessHours ? !businessHours[day.getDay()] : false
+          const isClosedDay =
+            (businessHours ? !businessHours[day.getDay()] : false) ||
+            (timeSlots.length > 0 && timeSlots.every((hour) => isCellClosed(day, hour)))
 
           const headerClasses = ['week-calendar-day-header']
           if (isPast) {
@@ -214,9 +231,7 @@ export const WeekCalendar = <T extends CalendarEvent>({
               const dayStr = formatDate(day, 'YYYY-MM-DD')
               const hourEvents = getEventsForDayAndHour(dayStr, hour)
               const isPast = isPastDate(day) && !isToday(day)
-              const isClosed = businessHours
-                ? !isHourOpen(businessHours[day.getDay()] ?? null, hour)
-                : false
+              const isClosed = isCellClosed(day, hour)
 
               const cellClasses = ['week-calendar-time-cell']
               if (isPast) {
