@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import './styles.scss'
 import { CalendarEvent, BaseCalendarProps, BusinessHours, ClosedRange, DayHours } from '../shared/types'
-import { isEqual, isToday, isPastDate } from '../shared/utils'
+import { isEqual, isToday, isPastDate, toLocalDateKey } from '../shared/utils'
 import { en } from '../shared/locales'
 
 // Parse "HH:mm" (24h) into a { h, m } pair. Invalid input falls back to 0.
@@ -70,7 +70,7 @@ const formatDate = (date: Date, format: string): string => {
   const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()]
 
   if (format === 'YYYY-MM-DD') {
-    return date.toISOString().split('T')[0]
+    return toLocalDateKey(date)
   }
   if (format === 'ddd') {
     return dayName
