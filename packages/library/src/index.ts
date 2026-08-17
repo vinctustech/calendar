@@ -10,6 +10,7 @@ export type {
   CalendarLocale,
   BaseCalendarProps,
   BusinessHours,
+  ClosedRange,
   DayHours,
 } from './shared/types'
 export { en, fr } from './shared/locales'

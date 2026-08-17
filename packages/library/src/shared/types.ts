@@ -18,6 +18,11 @@ export type DayHours = { start: string; end: string } | null
 // as non-interactive.
 export type BusinessHours = DayHours[]
 
+// A date-specific closed window (may span multiple days). Overlapping time
+// renders like closed business hours: WeekCalendar closes overlapping hour
+// cells, and MonthCalendar marks days fully covered by a range as closed.
+export type ClosedRange = { start: Date; end: Date }
+
 export type BaseCalendarProps<T extends CalendarEvent = CalendarEvent> = {
   date: Date
   events: T[]
@@ -27,6 +32,7 @@ export type BaseCalendarProps<T extends CalendarEvent = CalendarEvent> = {
   theme?: 'light' | 'dark'
   allowPastInteraction?: boolean // Default: false - when true, past cells remain clickable while keeping visual styling
   businessHours?: BusinessHours
+  closedRanges?: ClosedRange[]
 }
 
 export type CalendarLocale = {

@@ -2,6 +2,14 @@ import { CalendarEvent } from './types'
 
 export const isToday = (date: Date) => isEqual(date, new Date())
 
+// YYYY-MM-DD key for the local calendar day. toISOString() would key by the
+// UTC day, shifting near-midnight dates into the neighbouring day.
+export const toLocalDateKey = (date: Date) => {
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
 export const isEqual = (a: Date, b: Date) => {
   const acopy = new Date(a)
   const bcopy = new Date(b)
