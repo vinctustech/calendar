@@ -66,6 +66,61 @@ const spanWithinHour = (event: CalendarEvent): { top: number; height: number } |
   return { top: (event.date.getMinutes() / 60) * 100, height: (minutes / 60) * 100 }
 }
 
+// Which of the columns its overlapping neighbours are spread over a block takes.
+type SpanColumn = { column: number; columns: number }
+
+/**
+ * Assigns each spanning event of one day a column, so that blocks covering the
+ * same time sit beside each other. Events are grouped per day rather than per
+ * hour cell because two blocks starting in different hours still overlap — a
+ * cell only knows the blocks that begin inside it, and laying out from there
+ * leaves those two drawn over one another at full width.
+ */
+const assignSpanColumns = (dayEvents: CalendarEvent[]): Map<CalendarEvent, SpanColumn> => {
+  const columns = new Map<CalendarEvent, SpanColumn>()
+  const spanning = dayEvents
+    .filter((event) => spanWithinHour(event) !== null)
+    .sort((first, second) => first.date.getTime() - second.date.getTime())
+
+  let group: CalendarEvent[] = []
+  let groupEnd = 0
+
+  // A run of events that overlap transitively shares the width; the next event
+  // starting at or after the run's end begins a fresh one at full width again.
+  const closeGroup = (): void => {
+    const columnEnds: number[] = []
+    const columnOfEvent = new Map<CalendarEvent, number>()
+
+    group.forEach((event) => {
+      const start = event.date.getTime()
+      const reusable = columnEnds.findIndex((end) => end <= start)
+      const column = reusable === -1 ? columnEnds.length : reusable
+
+      columnEnds[column] = event.end?.getTime() ?? start
+      columnOfEvent.set(event, column)
+    })
+    group.forEach((event) => {
+      columns.set(event, { column: columnOfEvent.get(event) ?? 0, columns: columnEnds.length })
+    })
+    group = []
+    groupEnd = 0
+  }
+
+  spanning.forEach((event) => {
+    if (group.length > 0 && event.date.getTime() >= groupEnd) {
+      closeGroup()
+    }
+    group.push(event)
+    groupEnd = Math.max(groupEnd, event.end?.getTime() ?? 0)
+  })
+
+  if (group.length > 0) {
+    closeGroup()
+  }
+
+  return columns
+}
+
 // Simple date utility functions to replace dayjs
 const getWeekStart = (date: Date): Date => {
   const d = new Date(date)
@@ -146,6 +201,16 @@ export const WeekCalendar = <T extends CalendarEvent>({
     })
     return grouped
   }, [events])
+
+  const spanColumns = useMemo(() => {
+    const columns = new Map<CalendarEvent, SpanColumn>()
+
+    Object.values(eventsByDay).forEach((dayEvents) => {
+      assignSpanColumns(dayEvents).forEach((column, event) => columns.set(event, column))
+    })
+
+    return columns
+  }, [eventsByDay])
 
   // Hour range: union of open windows across the visible week when
   // businessHours is provided, otherwise the full day.
@@ -304,15 +369,16 @@ export const WeekCalendar = <T extends CalendarEvent>({
                       eventClasses.push('week-calendar-event-spanning')
                     }
 
-                    // Spanning blocks share the cell's width so that two of
-                    // them starting in the same hour sit side by side.
-                    const spanIndex = spans.slice(0, idx).filter((other) => other !== null).length
+                    // Overlapping blocks share the day's width, whether or not
+                    // they start in the same hour.
+                    const spanColumn = spanColumns.get(event)
+                    const columnCount = spanColumn?.columns ?? 1
                     const spanStyle: React.CSSProperties | undefined = span
                       ? {
                           top: `${span.top}%`,
                           height: `${span.height}%`,
-                          left: `${(spanIndex / spanningCount) * 100}%`,
-                          width: `${100 / spanningCount}%`,
+                          left: `${((spanColumn?.column ?? 0) / columnCount) * 100}%`,
+                          width: `${100 / columnCount}%`,
                           borderLeftColor: event.color || '#bfbfbf',
                         }
                       : undefined

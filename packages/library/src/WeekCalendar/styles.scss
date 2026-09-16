@@ -215,6 +215,13 @@
       background-color: var(--calendar-bg-event-hover);
       // The component fills the colour in from the event.
       border-left: 3px solid transparent;
+
+      // A block is as tall as the window it covers, so its title wraps to fill
+      // that room rather than being cut to the one line a chip allows.
+      .week-calendar-event-title {
+        white-space: normal;
+        text-overflow: clip;
+      }
     }
   }
 
