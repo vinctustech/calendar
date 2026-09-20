@@ -129,6 +129,13 @@
       background-color: var(--calendar-bg-day-hover);
     }
 
+    // Only a cell holding a block that runs past its own hour stops scrolling
+    // its overflow, so cells of stacked chips keep behaving as they always did.
+    &.week-calendar-time-cell-spanning {
+      overflow: visible;
+      z-index: 1;
+    }
+
     // Past cell styles - visual only
     &.week-calendar-time-cell-past {
       // Visual styling only, no cursor
@@ -194,6 +201,27 @@
 
     &.week-calendar-event-future {
       color: var(--calendar-text-primary);
+    }
+
+    // An event that knows when it ends is drawn as a block over the hours it
+    // covers, so it is taken out of the cell's stacked flow and sized from the
+    // percentages the component computes.
+    &.week-calendar-event-spanning {
+      position: absolute;
+      align-items: flex-start;
+      margin-bottom: 0;
+      padding: 3px 4px;
+      white-space: normal;
+      background-color: var(--calendar-bg-event-hover);
+      // The component fills the colour in from the event.
+      border-left: 3px solid transparent;
+
+      // A block is as tall as the window it covers, so its title wraps to fill
+      // that room rather than being cut to the one line a chip allows.
+      .week-calendar-event-title {
+        white-space: normal;
+        text-overflow: clip;
+      }
     }
   }
 

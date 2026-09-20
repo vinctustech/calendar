@@ -15,10 +15,10 @@ const sampleBusinessHours: BusinessHours = [
 ]
 
 // Sample closed ranges: tomorrow fully closed, a midday window two days out.
-const dayStart = (offset: number, hour = 0) => {
+const dayStart = (offset: number, hour = 0, minute = 0) => {
   const d = new Date()
   d.setDate(d.getDate() + offset)
-  d.setHours(hour, 0, 0, 0)
+  d.setHours(hour, minute, 0, 0)
   return d
 }
 const sampleClosedRanges: ClosedRange[] = [
@@ -279,6 +279,43 @@ const sampleEvents: CalendarEvent[] = [
     date: new Date(2025, 2, 29, 9, 45),
     title: '9:45am\u2002Daniel Hall\u2002Shuttle Pickup\u2002Alpha Store',
     color: '#60be23',
+    strikethrough: false,
+  },
+  // Two events with no end, for comparison with the blocks below: they stay
+  // one-line chips stacked in their starting hour.
+  {
+    date: dayStart(2, 10),
+    title: '10:00 Anna Perez Valet Pickup Alpha Store',
+    color: '#60be23',
+    strikethrough: false,
+  },
+  {
+    date: dayStart(2, 10, 40),
+    title: '10:40 Tom Reid Part Delivery Alpha Store',
+    color: '#bfbfbf',
+    strikethrough: false,
+  },
+  // Events that carry an end, drawn in the week view as blocks over the hours
+  // they cover. Dated off today so they land in the week the demo opens on.
+  {
+    date: dayStart(3, 9),
+    end: dayStart(3, 17),
+    title: '09:00\u201317:00\u2002Morning shuttle\u2002Alpha Store',
+    color: '#60be23',
+    strikethrough: false,
+  },
+  {
+    date: dayStart(3, 9),
+    end: dayStart(3, 12),
+    title: '09:00\u201312:00\u2002Parts run\u2002Alpha Store',
+    color: '#bfbfbf',
+    strikethrough: false,
+  },
+  {
+    date: dayStart(4, 13, 30),
+    end: dayStart(4, 15),
+    title: '13:30\u201315:00\u2002Airport transfer\u2002Bravo Store',
+    color: '#e25263',
     strikethrough: false,
   },
 ]

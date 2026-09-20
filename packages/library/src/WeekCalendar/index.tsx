@@ -51,6 +51,76 @@ const isHourOpen = (hours: DayHours, hour: number): boolean => {
   return hour >= sh && hour < endHourExclusive
 }
 
+// Where a spanning event sits inside its starting hour cell, as percentages of
+// one hour row, so the block tracks whatever height that row happens to have.
+// Null for an event that should stay a one-line chip: no end, an end at or
+// before the start, or an end on a later day.
+const spanWithinHour = (event: CalendarEvent): { top: number; height: number } | null => {
+  if (!event.end) return null
+
+  const minutes = (event.end.getTime() - event.date.getTime()) / 60000
+
+  if (minutes <= 0) return null
+  if (toLocalDateKey(event.end) !== toLocalDateKey(event.date)) return null
+
+  return { top: (event.date.getMinutes() / 60) * 100, height: (minutes / 60) * 100 }
+}
+
+// Which of the columns its overlapping neighbours are spread over a block takes.
+type SpanColumn = { column: number; columns: number }
+
+/**
+ * Assigns each spanning event of one day a column, so that blocks covering the
+ * same time sit beside each other. Events are grouped per day rather than per
+ * hour cell because two blocks starting in different hours still overlap — a
+ * cell only knows the blocks that begin inside it, and laying out from there
+ * leaves those two drawn over one another at full width.
+ */
+const assignSpanColumns = (dayEvents: CalendarEvent[]): Map<CalendarEvent, SpanColumn> => {
+  const columns = new Map<CalendarEvent, SpanColumn>()
+  const spanning = dayEvents
+    .filter((event) => spanWithinHour(event) !== null)
+    .sort((first, second) => first.date.getTime() - second.date.getTime())
+
+  let group: CalendarEvent[] = []
+  let groupEnd = 0
+
+  // A run of events that overlap transitively shares the width; the next event
+  // starting at or after the run's end begins a fresh one at full width again.
+  const closeGroup = (): void => {
+    const columnEnds: number[] = []
+    const columnOfEvent = new Map<CalendarEvent, number>()
+
+    group.forEach((event) => {
+      const start = event.date.getTime()
+      const reusable = columnEnds.findIndex((end) => end <= start)
+      const column = reusable === -1 ? columnEnds.length : reusable
+
+      columnEnds[column] = event.end?.getTime() ?? start
+      columnOfEvent.set(event, column)
+    })
+    group.forEach((event) => {
+      columns.set(event, { column: columnOfEvent.get(event) ?? 0, columns: columnEnds.length })
+    })
+    group = []
+    groupEnd = 0
+  }
+
+  spanning.forEach((event) => {
+    if (group.length > 0 && event.date.getTime() >= groupEnd) {
+      closeGroup()
+    }
+    group.push(event)
+    groupEnd = Math.max(groupEnd, event.end?.getTime() ?? 0)
+  })
+
+  if (group.length > 0) {
+    closeGroup()
+  }
+
+  return columns
+}
+
 // Simple date utility functions to replace dayjs
 const getWeekStart = (date: Date): Date => {
   const d = new Date(date)
@@ -131,6 +201,16 @@ export const WeekCalendar = <T extends CalendarEvent>({
     })
     return grouped
   }, [events])
+
+  const spanColumns = useMemo(() => {
+    const columns = new Map<CalendarEvent, SpanColumn>()
+
+    Object.values(eventsByDay).forEach((dayEvents) => {
+      assignSpanColumns(dayEvents).forEach((column, event) => columns.set(event, column))
+    })
+
+    return columns
+  }, [eventsByDay])
 
   // Hour range: union of open windows across the visible week when
   // businessHours is provided, otherwise the full day.
@@ -233,12 +313,19 @@ export const WeekCalendar = <T extends CalendarEvent>({
               const isPast = isPastDate(day) && !isToday(day)
               const isClosed = isCellClosed(day, hour)
 
+              // A block taller than its own hour has to escape the cell, which
+              // otherwise scrolls its overflow. Only cells that actually hold
+              // one are switched over, so every other cell keeps scrolling.
+              const spans = hourEvents.map(spanWithinHour)
+              const spanningCount = spans.filter((span) => span !== null).length
+
               const cellClasses = ['week-calendar-time-cell']
               if (isPast) {
                 cellClasses.push('week-calendar-time-cell-past')
                 if (!allowPastInteraction) cellClasses.push('week-calendar-time-cell-non-interactive')
               }
               if (isClosed) cellClasses.push('week-calendar-time-cell-closed')
+              if (spanningCount > 0) cellClasses.push('week-calendar-time-cell-spanning')
 
               return (
                 <div
@@ -273,16 +360,34 @@ export const WeekCalendar = <T extends CalendarEvent>({
                   }}
                 >
                   {hourEvents.map((event, idx) => {
+                    const span = spans[idx]
                     const eventClasses = ['week-calendar-event']
                     if (event.strikethrough) {
                       eventClasses.push('week-calendar-event-cancelled')
                     }
+                    if (span) {
+                      eventClasses.push('week-calendar-event-spanning')
+                    }
+
+                    // Overlapping blocks share the day's width, whether or not
+                    // they start in the same hour.
+                    const spanColumn = spanColumns.get(event)
+                    const columnCount = spanColumn?.columns ?? 1
+                    const spanStyle: React.CSSProperties | undefined = span
+                      ? {
+                          top: `${span.top}%`,
+                          height: `${span.height}%`,
+                          left: `${((spanColumn?.column ?? 0) / columnCount) * 100}%`,
+                          width: `${100 / columnCount}%`,
+                          borderLeftColor: event.color || '#bfbfbf',
+                        }
+                      : undefined
 
                     return (
                       <div
                         key={idx}
                         className={eventClasses.join(' ')}
-                        style={event.style}
+                        style={spanStyle ? { ...spanStyle, ...event.style } : event.style}
                         title={event.title}
                         onClick={(e) => {
                           e.stopPropagation()

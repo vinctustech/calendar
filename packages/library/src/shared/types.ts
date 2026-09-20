@@ -6,6 +6,11 @@ export type CalendarEvent = {
   color: string
   strikethrough?: boolean
   style?: CSSProperties
+  // When the event finishes. WeekCalendar draws such an event as a block from
+  // `date` down to here instead of a one-line chip in its starting hour;
+  // MonthCalendar ignores it. An end at or before `date`, or on a later day,
+  // falls back to the chip.
+  end?: Date
 }
 
 // Open window for a single day. null = closed that weekday.
